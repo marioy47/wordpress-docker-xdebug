@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  # MariaDB
+  db:
+    image: mariadb
+    container_name: wp-xdebug-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - wp-xdebug-data:/var/lib/mysql
+
+  # WordPress
+  wp:
+    # image: wordpress:5-apache
+    build: ./
+    container_name: wp-xdebug-wp
+    environment:
+      WORDPRESS_DB_HOST: wp-xdebug-db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp-xdebug-html:/var/www/html
+      - ./:/var/www/html/wp-content/plugins/wordpress-docker-xdebug
+    ports:
+      - 3000:80
+
+# Persist wordpress and database data
+volumes:
+  wp-xdebug-data:
+  wp-xdebug-html:
+
+# Make the name on the networks list pretty
+networks:
+  default:
+    name: wp-xdebug-network
